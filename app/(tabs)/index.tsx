@@ -89,16 +89,16 @@ export default function HomeScreen() {
       let data;
       switch (method) {
         case 'Fuel':
-          data = await calculateFuelEmission(params.type || 'Petrol', parseFloat(params.litres || '0'));
+          data = await calculateFuelEmission(params.fuelType || 'Petrol', parseFloat(params.litres || '0'));
           break;
         case 'CarTravel':
-          data = await calculateCarTravelEmission(parseFloat(params.distance || '0'), params.vehicle || '');
+          data = await calculateCarTravelEmission(parseFloat(params.distance || '0'), params.carType || '');
           break;
         case 'Flight':
           data = await calculateFlightEmission(parseFloat(params.distance || '0'), params.flightType || '');
           break;
         case 'Motorbike':
-          data = await calculateMotorbikeEmission(params.type || 'SmallMotorBike', parseFloat(params.distance || '0'));
+          data = await calculateMotorbikeEmission(params.type || 'SmallMotorBike', parseFloat(params.motorbikeType || '0'));
           break;
         case 'PublicTransit':
           data = await calculatePublicTransportEmission(parseFloat(params.distance || '0'), params.transportType || '');
@@ -143,12 +143,14 @@ export default function HomeScreen() {
       {method === 'Fuel' && (
         <>
           <Text>Fuel Type (Petrol, Diesel, LPG):</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Fuel Type"
-            onChangeText={(text) => handleInputChange('type', text)}
-            value={params.type || ''}
-          />
+          <Picker
+            selectedValue={params.fuelType}
+            onValueChange={(itemValue) => handleInputChange('fuelType', itemValue)}
+          >
+            {types.type.fuelTypes.map((type) => (
+              <Picker.Item key={type} label={type} value={type} />
+            ))}
+          </Picker>
           <Text>Litres:</Text>
           <TextInput
             style={styles.input}
@@ -171,12 +173,14 @@ export default function HomeScreen() {
             value={params.distance || ''}
           />
           <Text>Vehicle Type (e.g., SmallDieselCar):</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Vehicle Type"
-            onChangeText={(text) => handleInputChange('vehicle', text)}
-            value={params.vehicle || ''}
-          />
+          <Picker
+            selectedValue={params.carType}
+            onValueChange={(itemValue) => handleInputChange('carType', itemValue)}
+          >
+            {types.type.carTypes.map((type) => (
+              <Picker.Item key={type} label={type} value={type} />
+            ))}
+          </Picker>
         </>
       )}
 
@@ -191,24 +195,28 @@ export default function HomeScreen() {
             value={params.distance || ''}
           />
           <Text>Flight Type (DomesticFlight, etc.):</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Flight Type"
-            onChangeText={(text) => handleInputChange('flightType', text)}
-            value={params.flightType || ''}
-          />
+          <Picker
+            selectedValue={params.flightType}
+            onValueChange={(itemValue) => handleInputChange('flightType', itemValue)}
+          >
+            {types.type.flightTypes.map((type) => (
+              <Picker.Item key={type} label={type} value={type} />
+            ))}
+          </Picker>
         </>
       )}
 
       {method === 'Motorbike' && (
         <>
           <Text>Motorbike Type (SmallMotorBike, etc.):</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Type"
-            onChangeText={(text) => handleInputChange('type', text)}
-            value={params.type || ''}
-          />
+          <Picker
+            selectedValue={params.motorbikeType}
+            onValueChange={(itemValue) => handleInputChange('motorbikeType', itemValue)}
+          >
+            {types.type.motorbikeTypes.map((type) => (
+              <Picker.Item key={type} label={type} value={type} />
+            ))}
+          </Picker>
           <Text>Distance (km):</Text>
           <TextInput
             style={styles.input}
@@ -230,13 +238,15 @@ export default function HomeScreen() {
             onChangeText={(text) => handleInputChange('distance', text)}
             value={params.distance || ''}
           />
-          <Text>Transport Type (Taxi, ClassicBus, etc.):</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Transport Type"
-            onChangeText={(text) => handleInputChange('transportType', text)}
-            value={params.transportType || ''}
-          />
+          <Text>Transport Type:</Text>
+          <Picker
+            selectedValue={params.transportType}
+            onValueChange={(itemValue) => handleInputChange('transportType', itemValue)}
+          >
+            {types.type.transportationTypes.map((type) => (
+              <Picker.Item key={type} label={type} value={type} />
+            ))}
+          </Picker>
         </>
       )}
 
