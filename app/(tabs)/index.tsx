@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import { MaterialIcons } from '@expo/vector-icons'; // Import icons from Expo
 import {
   calculateFuelEmission,
   calculateCarTravelEmission,
@@ -82,168 +83,199 @@ export default function HomeScreen() {
     }
   };
 
+  const handleScanProduct = () => {
+    router.push('/scan');
+  };
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.heading}>🌱 Carbon Emission Calculator</Text>
+    <View style={styles.mainContainer}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.heading}>🌱 Carbon Emission Calculator</Text>
 
-      <View style={styles.card}>
-        <Text style={styles.label}>Select Calculation Method:</Text>
-        <Picker
-          selectedValue={method}
-          onValueChange={(itemValue) => {
-            setMethod(itemValue as CalculationMethod);
-            setParams({});
-            setResult(null);
-          }}
-          style={styles.picker}
-        >
-          <Picker.Item label="Fuel Consumption" value="Fuel" />
-          <Picker.Item label="Car Travel" value="CarTravel" />
-          <Picker.Item label="Flight" value="Flight" />
-          <Picker.Item label="Motorbike" value="Motorbike" />
-          <Picker.Item label="Public Transit" value="PublicTransit" />
-        </Picker>
-      </View>
-
-      <View style={styles.card}>
-        {method === 'Fuel' && (
-          <>
-            <Text style={styles.label}>Fuel Type:</Text>
-            <Picker
-              selectedValue={params.fuelType}
-              onValueChange={(itemValue) => handleInputChange('fuelType', itemValue)}
-              style={styles.picker}
-            >
-              {types.type.fuelTypes.map((type) => (
-                <Picker.Item key={type} label={type} value={type} />
-              ))}
-            </Picker>
-            <Text style={styles.label}>Litres:</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Litres"
-              keyboardType="numeric"
-              onChangeText={(text) => handleInputChange('litres', text)}
-              value={params.litres || ''}
-            />
-          </>
-        )}
-
-        {method === 'CarTravel' && (
-          <>
-            <Text style={styles.label}>Distance (km):</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Distance"
-              keyboardType="numeric"
-              onChangeText={(text) => handleInputChange('distance', text)}
-              value={params.distance || ''}
-            />
-            <Text style={styles.label}>Vehicle Type:</Text>
-            <Picker
-              selectedValue={params.carType}
-              onValueChange={(itemValue) => handleInputChange('carType', itemValue)}
-              style={styles.picker}
-            >
-              {types.type.carTypes.map((type) => (
-                <Picker.Item key={type} label={type} value={type} />
-              ))}
-            </Picker>
-          </>
-        )}
-
-        {method === 'Flight' && (
-          <>
-            <Text style={styles.label}>Distance (km):</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Distance"
-              keyboardType="numeric"
-              onChangeText={(text) => handleInputChange('distance', text)}
-              value={params.distance || ''}
-            />
-            <Text style={styles.label}>Flight Type:</Text>
-            <Picker
-              selectedValue={params.flightType}
-              onValueChange={(itemValue) => handleInputChange('flightType', itemValue)}
-              style={styles.picker}
-            >
-              {types.type.flightTypes.map((type) => (
-                <Picker.Item key={type} label={type} value={type} />
-              ))}
-            </Picker>
-          </>
-        )}
-
-        {method === 'Motorbike' && (
-          <>
-            <Text style={styles.label}>Motorbike Type:</Text>
-            <Picker
-              selectedValue={params.motorbikeType}
-              onValueChange={(itemValue) => handleInputChange('motorbikeType', itemValue)}
-              style={styles.picker}
-            >
-              {types.type.motorbikeTypes.map((type) => (
-                <Picker.Item key={type} label={type} value={type} />
-              ))}
-            </Picker>
-            <Text style={styles.label}>Distance (km):</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Distance"
-              keyboardType="numeric"
-              onChangeText={(text) => handleInputChange('distance', text)}
-              value={params.distance || ''}
-            />
-          </>
-        )}
-
-        {method === 'PublicTransit' && (
-          <>
-            <Text style={styles.label}>Distance (km):</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Distance"
-              keyboardType="numeric"
-              onChangeText={(text) => handleInputChange('distance', text)}
-              value={params.distance || ''}
-            />
-            <Text style={styles.label}>Transport Type:</Text>
-            <Picker
-              selectedValue={params.transportType}
-              onValueChange={(itemValue) => handleInputChange('transportType', itemValue)}
-              style={styles.picker}
-            >
-              {types.type.transportationTypes.map((type) => (
-                <Picker.Item key={type} label={type} value={type} />
-              ))}
-            </Picker>
-          </>
-        )}
-      </View>
-
-      <TouchableOpacity style={styles.button} onPress={handleCalculate}>
-        <Text style={styles.buttonText}>Calculate</Text>
-      </TouchableOpacity>
-
-      {result && (
-        <View style={styles.resultCard}>
-          <Text style={styles.resultTitle}>Your Carbon Footprint</Text>
-          <Text style={styles.resultText}>{result?.carbonEquivalent}</Text>
+        <View style={styles.card}>
+          <Text style={styles.label}>Select Calculation Method:</Text>
+          <Picker
+            selectedValue={method}
+            onValueChange={(itemValue) => {
+              setMethod(itemValue as CalculationMethod);
+              setParams({});
+              setResult(null);
+            }}
+            style={styles.picker}
+          >
+            <Picker.Item label="Fuel Consumption" value="Fuel" />
+            <Picker.Item label="Car Travel" value="CarTravel" />
+            <Picker.Item label="Flight" value="Flight" />
+            <Picker.Item label="Motorbike" value="Motorbike" />
+            <Picker.Item label="Public Transit" value="PublicTransit" />
+          </Picker>
         </View>
-      )}
-      <Button
-        title="Go to Details"
-        onPress={() => router.push('/scan')}
-      />
-    </ScrollView>
+
+        <View style={styles.card}>
+          {method === 'Fuel' && (
+            <>
+              <Text style={styles.label}>Fuel Type:</Text>
+              <Picker
+                selectedValue={params.fuelType}
+                onValueChange={(itemValue) => handleInputChange('fuelType', itemValue)}
+                style={styles.picker}
+              >
+                {types.type.fuelTypes.map((type) => (
+                  <Picker.Item key={type} label={type} value={type} />
+                ))}
+              </Picker>
+              <Text style={styles.label}>Litres:</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Litres"
+                keyboardType="numeric"
+                onChangeText={(text) => handleInputChange('litres', text)}
+                value={params.litres || ''}
+              />
+            </>
+          )}
+
+          {method === 'CarTravel' && (
+            <>
+              <Text style={styles.label}>Distance (km):</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Distance"
+                keyboardType="numeric"
+                onChangeText={(text) => handleInputChange('distance', text)}
+                value={params.distance || ''}
+              />
+              <Text style={styles.label}>Vehicle Type:</Text>
+              <Picker
+                selectedValue={params.carType}
+                onValueChange={(itemValue) => handleInputChange('carType', itemValue)}
+                style={styles.picker}
+              >
+                {types.type.carTypes.map((type) => (
+                  <Picker.Item key={type} label={type} value={type} />
+                ))}
+              </Picker>
+            </>
+          )}
+
+          {method === 'Flight' && (
+            <>
+              <Text style={styles.label}>Distance (km):</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Distance"
+                keyboardType="numeric"
+                onChangeText={(text) => handleInputChange('distance', text)}
+                value={params.distance || ''}
+              />
+              <Text style={styles.label}>Flight Type:</Text>
+              <Picker
+                selectedValue={params.flightType}
+                onValueChange={(itemValue) => handleInputChange('flightType', itemValue)}
+                style={styles.picker}
+              >
+                {types.type.flightTypes.map((type) => (
+                  <Picker.Item key={type} label={type} value={type} />
+                ))}
+              </Picker>
+            </>
+          )}
+
+          {method === 'Motorbike' && (
+            <>
+              <Text style={styles.label}>Motorbike Type:</Text>
+              <Picker
+                selectedValue={params.motorbikeType}
+                onValueChange={(itemValue) => handleInputChange('motorbikeType', itemValue)}
+                style={styles.picker}
+              >
+                {types.type.motorbikeTypes.map((type) => (
+                  <Picker.Item key={type} label={type} value={type} />
+                ))}
+              </Picker>
+              <Text style={styles.label}>Distance (km):</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Distance"
+                keyboardType="numeric"
+                onChangeText={(text) => handleInputChange('distance', text)}
+                value={params.distance || ''}
+              />
+            </>
+          )}
+
+          {method === 'PublicTransit' && (
+            <>
+              <Text style={styles.label}>Distance (km):</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Distance"
+                keyboardType="numeric"
+                onChangeText={(text) => handleInputChange('distance', text)}
+                value={params.distance || ''}
+              />
+              <Text style={styles.label}>Transport Type:</Text>
+              <Picker
+                selectedValue={params.transportType}
+                onValueChange={(itemValue) => handleInputChange('transportType', itemValue)}
+                style={styles.picker}
+              >
+                {types.type.transportationTypes.map((type) => (
+                  <Picker.Item key={type} label={type} value={type} />
+                ))}
+              </Picker>
+            </>
+          )}
+        </View>
+
+        <TouchableOpacity style={styles.button} onPress={handleCalculate}>
+          <Text style={styles.buttonText}>Calculate</Text>
+        </TouchableOpacity>
+
+        {result && (
+          <View style={styles.resultCard}>
+            <Text style={styles.resultTitle}>Your Carbon Footprint</Text>
+            <Text style={styles.resultText}>{result?.carbonEquivalent}</Text>
+          </View>
+        )}
+        
+        {/* Added padding at the bottom to ensure content doesn't get hidden behind FAB */}
+        <View style={styles.bottomPadding} />
+      </ScrollView>
+      
+      {/* Floating Action Button for Scan Product with green color and scan icon */}
+      <TouchableOpacity 
+        style={styles.fabButton} 
+        onPress={handleScanProduct}
+        activeOpacity={0.8}
+      >
+        <MaterialIcons name="qr-code-scanner" size={24} color="white" />
+      </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20, backgroundColor: '#f1f5f9' },
-  heading: { fontSize: 24, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' },
-  label: { fontSize: 16, marginTop: 10, marginBottom: 5 },
+  mainContainer: {
+    flex: 1,
+    backgroundColor: '#f1f5f9',
+    position: 'relative'
+  },
+  container: { 
+    padding: 20, 
+    backgroundColor: '#f1f5f9' 
+  },
+  heading: { 
+    fontSize: 24, 
+    fontWeight: 'bold', 
+    marginBottom: 20, 
+    textAlign: 'center' 
+  },
+  label: { 
+    fontSize: 16, 
+    marginTop: 10, 
+    marginBottom: 5 
+  },
   input: {
     backgroundColor: '#fff',
     padding: 12,
@@ -272,13 +304,45 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 20,
   },
-  buttonText: { color: '#fff', textAlign: 'center', fontSize: 16, fontWeight: 'bold' },
+  buttonText: { 
+    color: '#fff', 
+    textAlign: 'center', 
+    fontSize: 16, 
+    fontWeight: 'bold' 
+  },
   resultCard: {
     backgroundColor: '#e0f2fe',
     padding: 15,
     borderRadius: 12,
     marginTop: 10,
   },
-  resultTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 5 },
-  resultText: { fontFamily: 'monospace', color: '#1e3a8a' },
+  resultTitle: { 
+    fontSize: 18, 
+    fontWeight: 'bold', 
+    marginBottom: 5 
+  },
+  resultText: { 
+    fontFamily: 'monospace', 
+    color: '#1e3a8a' 
+  },
+  fabButton: {
+    position: 'absolute',
+    bottom: 20, // Moved closer to the nav bar
+    right: 20,
+    backgroundColor: '#16a34a', // Green color to match the Calculate button
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8, // Android shadow
+    shadowColor: '#000', // iOS shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    zIndex: 999,
+  },
+  bottomPadding: {
+    height: 80, // Extra padding at the bottom to ensure content isn't hidden behind the FAB
+  }
 });
