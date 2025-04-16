@@ -1,10 +1,10 @@
 import { ThemedText } from "@/components/ThemedText";
-import { View } from "react-native";
+import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 
 export default function HomeScreen() {
     return (
-        <View>
+        <ThemedSafeAreaView>
             <ThemedText>Home Screen</ThemedText>
-        </View>
+        </ThemedSafeAreaView>
     )
 }
