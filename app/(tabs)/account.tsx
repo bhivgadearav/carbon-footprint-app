@@ -1,18 +1,27 @@
+// src/screens/AccountScreen.tsx
+
 import React, { useContext, useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { AuthContext } from '../../context/AuthContext';
-import { login, signInWithProvider } from '../../services/auth';
+import { login, signup } from '../../services/auth';
 
-export default function AccountScreen() {
-    const { user, signOut } = useContext(AuthContext);
+const AccountScreen = () => {
+  const { user, setUser, signOut } = useContext(AuthContext);
+  const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = async () => {
+  const handleAuth = async () => {
     try {
-      await login(email, password);
+      if (mode === 'login') {
+        const loggedInUser = await login(email, password);
+        setUser(loggedInUser);
+      } else {
+        const signedUpUser = await signup(email, password);
+        setUser(signedUpUser);
+      }
     } catch (error) {
-      console.error(error);
+      console.error('Authentication error:', error);
     }
   };
 
@@ -25,7 +34,9 @@ export default function AccountScreen() {
         </>
       ) : (
         <>
-          <Text>Login / Signup</Text>
+          <Text style={styles.header}>
+            {mode === 'login' ? 'Login' : 'Sign Up'}
+          </Text>
           <TextInput
             style={styles.input}
             placeholder="Email"
@@ -39,17 +50,24 @@ export default function AccountScreen() {
             onChangeText={setPassword}
             value={password}
           />
-          <Button title="Login" onPress={handleLogin} />
-          <Button title="Continue with Google" onPress={() => signInWithProvider('google')} />
-          <Button title="Continue with Apple" onPress={() => signInWithProvider('apple')} />
+          <Button
+            title={mode === 'login' ? 'Login' : 'Sign Up'}
+            onPress={handleAuth}
+          />
+          <Button
+            title={`Switch to ${mode === 'login' ? 'Sign Up' : 'Login'}`}
+            onPress={() => setMode(mode === 'login' ? 'signup' : 'login')}
+          />
         </>
       )}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 16, justifyContent: 'center' },
-    input: { borderWidth: 1, borderColor: '#ccc', padding: 10, marginVertical: 10 },
+  container: { flex: 1, padding: 16, justifyContent: 'center' },
+  header: { fontSize: 24, marginBottom: 20, textAlign: 'center' },
+  input: { borderWidth: 1, borderColor: '#ccc', padding: 10, marginVertical: 10 },
 });
-  
+
+export default AccountScreen;

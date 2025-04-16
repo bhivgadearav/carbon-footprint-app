@@ -20,14 +20,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session && session.user) {
-        setUser({ id: session.user.id, email: session.user.email || '' });
+    const session = supabase.auth.getSession(); // or supabase.auth.session() if using earlier version
+    session.then(({ data }) => {
+      if (data.session) {
+        setUser({
+          id: data.session.user.id,
+          email: data.session.user.email || '',
+        });
       }
     });
-    supabase.auth.onAuthStateChange((_event, session) => {
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session ? { id: session.user.id, email: session.user.email || '' } : null);
     });
+
+    return () => {
+      authListener.subscription?.unsubscribe();
+    };
   }, []);
 
   const signOut = async () => {

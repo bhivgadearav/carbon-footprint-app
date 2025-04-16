@@ -1,22 +1,30 @@
 import { supabase } from './supabaseClient';
 import { User } from '../schema/User';
 
-export const signup = async (email: string, password: string) => {
-  const { user, error } = await supabase.auth.signUp({ email, password });
-  if (error) throw error;
-  return user;
+export const signup = async (email: string, password: string): Promise<User | null> => {
+  const { data: { user }, error } = await supabase.auth.signUp({ email, password });
+  if (error) {
+    throw error;
+  }
+  if (!user) return null;
+  return {
+    id: user.id,
+    email: user.email || '', // Ensure email is a string
+    // Map other fields as necessary
+  } as User;
 };
 
-export const login = async (email: string, password: string) => {
-  const { user, error } = await supabase.auth.signIn({ email, password });
-  if (error) throw error;
-  return user;
-};
-
-export const signInWithProvider = async (provider: 'google' | 'apple') => {
-  const { user, session, error } = await supabase.auth.signIn({ provider });
-  if (error) throw error;
-  return { user, session };
+export const login = async (email: string, password: string): Promise<User | null> => {
+  const { data: { user }, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) {
+    throw error;
+  }
+  if (!user) return null;
+  return {
+    id: user.id,
+    email: user.email || '', // Ensure email is a string
+    // Map other fields as necessary
+  } as User;
 };
 
 export const createOrUpdateUserProfile = async (userData: User) => {
