@@ -26,7 +26,7 @@ export default function ScanInstructions() {
                 <ThemedView style={styles.sheetContainer}>
                     <View style={styles.topContentContainer}>
                         <MaterialCommunityIcons name="barcode-scan" size={48} color={Colors[theme].icon} />
-                        <ThemedText style={styles.title}>Scan any Barcode to See Ingredients</ThemedText>
+                        <ThemedText style={styles.title}>Scan any Barcode to See Ecoscore</ThemedText>
                     </View>
                     <ThemedText style={styles.subtitle}>
                     • Food • Edible Items Only • Drinks •
