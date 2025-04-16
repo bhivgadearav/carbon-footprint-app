@@ -7,57 +7,16 @@ import { Colors } from '@/constants/Colors';
 import { ThemedText } from '@/components/ThemedText';
 import ProductDetailsSheet from '@/components/ProductDetailsSheet';
 import ScanInstructions from '@/components/ScanInstructions';
+import { ParsedProduct } from '@/components/ProductDetails';
 
 const dummyProduct: ParsedProduct = {
   name: 'XYZ Product',
   brand: 'XYZ Brand',
   image: null,
-  nutrition: {
-    protein: { value: 0, unit: 'g' },
-    saturatedFat: { value: 0, unit: 'g' },
-    sugar: { value: 0, unit: 'g' },
-    salt: { value: 0, unit: 'g' },
-    calories: { value: 0, unit: 'cal' },
-  },
-  additives: {
-    count: 0,
-    tags: [],
-    names: [],
-  },
-  nutriscore: null,
-  novaGroup: null,
-  ingredients: 'XYZ Ingredients',
+  ecoscore_grade: '',
+  ecoscore_tags: [],
+  ecoscore_score: 0
 };
-
-interface NutrimentValue {
-  value: number;
-  unit: string;
-}
-
-interface ProductNutrition {
-  protein: NutrimentValue;
-  saturatedFat: NutrimentValue;
-  sugar: NutrimentValue;
-  salt: NutrimentValue;
-  calories: NutrimentValue;
-}
-
-interface ProductAdditives {
-  count: number;
-  tags: string[];
-  names: string[];
-}
-
-export interface ParsedProduct {
-  name: string;
-  brand: string;
-  image: string | null;
-  nutrition: ProductNutrition;
-  additives: ProductAdditives;
-  nutriscore: string | null;
-  novaGroup: number | null;
-  ingredients: string;
-}
 
 interface ApiNutriments {
   proteins_100g?: number;
@@ -120,44 +79,9 @@ const parseProductData = (product: ApiProduct): ParsedProduct => {
     name: product.product_name || 'Unknown Product',
     brand: product.brands || 'Unknown Brand',
     image: product.image_url || product.image_front_url || null,
-    
-    // Nutritional data (per 100g/100ml)
-    nutrition: {
-      protein: {
-        value: nutriments.proteins_100g || 0,
-        unit: 'g'
-      },
-      saturatedFat: {
-        value: nutriments['saturated-fat_100g'] || 0,
-        unit: 'g'
-      },
-      sugar: {
-        value: nutriments.sugars_100g || 0,
-        unit: 'g'
-      },
-      salt: {
-        value: nutriments.salt_100g || 0,
-        unit: 'g'
-      },
-      calories: {
-        value: nutriments.energy_value || nutriments['energy-kcal_100g'] || 0,
-        unit: nutriments.energy_unit === 'kcal' ? 'cal' : nutriments.energy_unit || 'cal'
-      }
-    },
-    
-    // Additives
-    additives: {
-      count: product.additives_n || 0,
-      tags: product.additives_tags || [],
-      names: product.additives_tags 
-        ? product.additives_tags.map(tag => tag.replace('en:', '')) 
-        : []
-    },
-    
-    // Additional useful information
-    nutriscore: product.nutriscore_grade || null,
-    novaGroup: product.nova_group || null,
-    ingredients: product.ingredients_text || ''
+    ecoscore_grade: product.ecoscore_grade || 'Unknown',
+    ecoscore_tags: product.ecoscore_tags || 'Unknown',
+    ecoscore_score: product.ecoscore_score || 0
   };
 };
 
