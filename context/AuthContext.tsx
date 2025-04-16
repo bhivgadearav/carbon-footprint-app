@@ -20,23 +20,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const session = supabase.auth.getSession(); // or supabase.auth.session() if using earlier version
-    session.then(({ data }) => {
-      if (data.session) {
+    const fetchSession = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) console.error('Error fetching session:', error);
+      if (session) {
         setUser({
-          id: data.session.user.id,
-          email: data.session.user.email || '',
+          id: session.user.id,
+          email: session.user.email || '',
         });
       }
-    });
-
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+    };
+  
+    fetchSession();
+  
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session ? { id: session.user.id, email: session.user.email || '' } : null);
     });
-
-    return () => {
-      authListener.subscription?.unsubscribe();
-    };
+  
+    return () => subscription?.unsubscribe();
   }, []);
 
   const signOut = async () => {

@@ -29,7 +29,7 @@ export const login = async (email: string, password: string): Promise<User | nul
 
 export const createOrUpdateUserProfile = async (userData: User) => {
   const { data, error } = await supabase
-    .from<User, any>('profiles')
+    .from<User>('profiles')
     .upsert(userData, { returning: 'minimal' });
   if (error) throw error;
   return data;
@@ -37,7 +37,7 @@ export const createOrUpdateUserProfile = async (userData: User) => {
 
 export const getUserProfile = async (userId: string) => {
   const { data, error } = await supabase
-    .from<User, any>('profiles')
+    .from<User>('profiles')
     .select('*')
     .eq('id', userId)
     .single();
@@ -47,7 +47,7 @@ export const getUserProfile = async (userId: string) => {
 
 export const editUserProfile = async (userId: string, updates: Partial<User>) => {
   const { data, error } = await supabase
-    .from<User, any>('profiles')
+    .from<User>('profiles')
     .update(updates)
     .eq('id', userId);
   if (error) throw error;

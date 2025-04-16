@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Button } from 'react-native';
 import { supabase } from '../../services/supabaseClient';
 import { AuthContext } from '../../context/AuthContext';
 import { UserEmissions } from '../../schema/UserEmissions';
+import { ThemedText } from '@/components/ThemedText';
 
 export default function ExploreScreen() {
   const { user } = useContext(AuthContext);
   const [emissionsData, setEmissionsData] = useState<UserEmissions[]>([]);
+  const [refresh, setRefresh] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchEmissions = async () => {
@@ -23,7 +25,7 @@ export default function ExploreScreen() {
       }
     };
     fetchEmissions();
-  }, [user]);
+  }, [user, refresh]);
 
   // Group records by year and month.
   const groupedData = emissionsData.reduce((acc: any, record) => {
@@ -37,6 +39,9 @@ export default function ExploreScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>Emissions History</Text>
+      <Button title='Refresh' onPress={() => {
+        setRefresh(!refresh)
+      }}></Button>
       {Object.entries(groupedData).map(([year, months]: any) => (
         <View key={year} style={styles.yearSection}>
           <Text style={styles.yearHeader}>Year: {year}</Text>

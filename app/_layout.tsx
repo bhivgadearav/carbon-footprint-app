@@ -1,10 +1,10 @@
 import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { AuthContext } from "@/context/AuthContext";
+import { AuthProvider } from "@/context/AuthContext";
 
 export default function Layout() {
     return (
-        <AuthContext.Provider value={{ user: null, setUser: () => {}, signOut: () => {} }}>
+        <AuthProvider>
             <GestureHandlerRootView>
                 <Stack 
                 screenOptions={{
@@ -13,6 +13,6 @@ export default function Layout() {
                 >
                 </Stack>
             </GestureHandlerRootView>
-        </AuthContext.Provider>
+        </AuthProvider>
     )
 }

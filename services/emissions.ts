@@ -11,12 +11,17 @@ export const addCalculationToEmissions = async (
 
   // Try to get an existing record for this user, year, and month.
   const { data, error } = await supabase
-    .from<UserEmissions>('user_emissions')
+    .from('user_emissions')
     .select('*')
     .match({ user_id: userId, year, month })
     .single();
 
-  if (error && !data) {
+  if (error && error.code !== 'PGRST116') { // Allow for "No rows found"
+    console.error('Error fetching existing emissions record:', error);
+    throw error;
+  }
+
+  if (!data) {
     // No record found – create a new one.
     const newRecord = {
       user_id: userId,
@@ -25,21 +30,28 @@ export const addCalculationToEmissions = async (
       calculations: [calculation],
     };
     const { data: insertData, error: insertError } = await supabase
-      .from<UserEmissions>('user_emissions')
+      .from('user_emissions')
       .insert(newRecord)
+      .select()
       .single();
-    if (insertError) throw insertError;
-    return insertData;
+    if (insertError) {
+      console.error('Insert Error:', insertError);
+      throw insertError;
+    }
+    return insertData as UserEmissions;
   }
 
   if (data) {
     // Record exists; append the new calculation.
     const updatedCalculations = [...data.calculations, calculation];
     const { error: updateError } = await supabase
-      .from<UserEmissions>('user_emissions')
+      .from('user_emissions')
       .update({ calculations: updatedCalculations })
-      .match({ id: data.id });
-    if (updateError) throw updateError;
+      .eq('id', data.id);
+    if (updateError) {
+      console.error('Update Error:', updateError);
+      throw updateError;
+    }
     return updatedCalculations;
   }
 
