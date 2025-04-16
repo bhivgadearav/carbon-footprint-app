@@ -11,6 +11,7 @@ import {
 import { AuthContext } from '../../context/AuthContext';
 import { addCalculationToEmissions } from '../../services/emissions';
 import { CalculationRecord } from '../../schema/UserEmissions';
+import { useRouter } from 'expo-router';
 
 type CalculationMethod = 'Fuel' | 'CarTravel' | 'Flight' | 'Motorbike' | 'PublicTransit';
 
@@ -37,6 +38,8 @@ export default function HomeScreen() {
   const [method, setMethod] = useState<CalculationMethod>('Fuel');
   const [params, setParams] = useState<Record<string, string>>({});
   const [result, setResult] = useState<any>(null);
+
+  const router = useRouter()
 
   const handleInputChange = (key: string, value: string) => {
     setParams((prev) => ({ ...prev, [key]: value }));
@@ -229,6 +232,10 @@ export default function HomeScreen() {
           <Text style={styles.resultText}>{result?.carbonEquivalent}</Text>
         </View>
       )}
+      <Button
+        title="Go to Details"
+        onPress={() => router.push('/scan')}
+      />
     </ScrollView>
   );
 }
