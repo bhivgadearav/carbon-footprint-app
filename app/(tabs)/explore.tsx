@@ -12,7 +12,7 @@ export default function ExploreScreen() {
     const fetchEmissions = async () => {
       if (user) {
         const { data, error } = await supabase
-          .from<UserEmissions>('user_emissions')
+          .from<string, any>('user_emissions')
           .select('*')
           .eq('user_id', user.id);
         if (error) {

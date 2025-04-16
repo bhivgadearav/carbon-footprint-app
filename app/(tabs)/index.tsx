@@ -14,6 +14,66 @@ import { CalculationRecord } from '../../schema/UserEmissions';
 
 type CalculationMethod = 'Fuel' | 'CarTravel' | 'Flight' | 'Motorbike' | 'PublicTransit';
 
+const types = {
+  "type": {
+    "transportationTypes": [
+      "Taxi",
+      "ClassicBus",
+      "EcoBus",
+      "Coach",
+      "NationalTrain",
+      "LightRail",
+      "Subway",
+      "FerryOnFoot",
+      "FerryInCar"
+    ],
+    "motorbikeTypes": [
+      "SmallMotorBike",
+      "MediumMotorBike",
+      "LargeMotorBike"
+    ],
+    "flightTypes": [
+      "DomesticFlight",
+      "ShortEconomyClassFlight",
+      "ShortBusinessClassFlight",
+      "LongEconomyClassFlight",
+      "LongPremiumClassFlight",
+      "LongBusinessClassFlight",
+      "LongFirstClassFlight"
+    ],
+    "fuelTypes": [
+      "Petrol",
+      "Diesel",
+      "LPG"
+    ],
+    "carTypes": [
+      "SmallDieselCar",
+      "MediumDieselCar",
+      "LargeDieselCar",
+      "MediumHybridCar",
+      "LargeHybridCar",
+      "MediumLPGCar",
+      "LargeLPGCar",
+      "MediumCNGCar",
+      "LargeCNGCar",
+      "SmallPetrolVan",
+      "LargePetrolVan",
+      "SmallDielselVan",
+      "MediumDielselVan",
+      "LargeDielselVan",
+      "LPGVan",
+      "CNGVan",
+      "SmallPetrolCar",
+      "MediumPetrolCar",
+      "LargePetrolCar",
+      "SmallMotorBike",
+      "MediumMotorBike",
+      "LargeMotorBike"
+    ]
+  }
+}
+
+
 export default function HomeScreen() {
   const { user } = useContext(AuthContext);
   const [method, setMethod] = useState<CalculationMethod>('Fuel');
