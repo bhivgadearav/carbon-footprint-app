@@ -1,8 +1,14 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, Text, SafeAreaView } from 'react-native';
+import { ThemedSafeAreaView } from '@/components/ThemedSafeAreaView';
 import { supabase } from '../../services/supabaseClient';
 import { AuthContext } from '../../context/AuthContext';
 import { UserEmissions } from '../../schema/UserEmissions';
+
+const monthNames = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
 
 export default function ExploreScreen() {
   const { user } = useContext(AuthContext);
@@ -32,51 +38,101 @@ export default function ExploreScreen() {
     return acc;
   }, {});
 
+  const renderParams = (method: string, rawParams: any) => {
+    const params = typeof rawParams === 'string' ? JSON.parse(rawParams) : rawParams;
+
+    switch (method) {
+      case 'Fuel':
+        return (
+          <>
+            <Text>Fuel Type: {params.fuelType}</Text>
+            <Text>Litres: {params.litres}</Text>
+          </>
+        );
+      case 'CarTravel':
+        return (
+          <>
+            <Text>Distance: {params.distance} km</Text>
+            {params.carType && <Text>Car Type: {params.carType}</Text>}
+          </>
+        );
+      case 'Flight':
+        return (
+          <>
+            <Text>Distance: {params.distance} km</Text>
+            {params.flightType && <Text>Flight Type: {params.flightType}</Text>}
+          </>
+        );
+      case 'Motorbike':
+        return (
+          <>
+            <Text>Motorbike Type: {params.type}</Text>
+            <Text>Distance: {params.motorbikeType}</Text>
+          </>
+        );
+      case 'PublicTransit':
+        return (
+          <>
+            <Text>Distance: {params.distance} km</Text>
+            {params.transportType && <Text>Transport Type: {params.transportType}</Text>}
+          </>
+        );
+      default:
+        return <Text>Unknown Method</Text>;
+    }
+  };
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>🌿 Emissions History</Text>
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scroll}>
+        <Text>🌱 Emissions History</Text>
 
-      <Pressable style={styles.refreshBtn} onPress={() => setRefresh(!refresh)}>
-        <Text style={styles.refreshText}>Refresh</Text>
-      </Pressable>
+        <Pressable style={styles.refreshBtn} onPress={() => setRefresh(!refresh)}>
+          <Text style={styles.refreshText}>Refresh</Text>
+        </Pressable>
 
-      {Object.entries(groupedData).map(([year, months]: any) => (
-        <View key={year} style={styles.section}>
-          <Text style={styles.year}>📅 Year: {year}</Text>
-          {Object.entries(months).map(([month, records]: any) => (
-            <View key={month} style={styles.subSection}>
-              <Text style={styles.month}>Month: {month}</Text>
-              {records.map((record: UserEmissions) =>
-                record.calculations.map((calc, idx) => (
-                  <View key={idx} style={styles.card}>
-                    <Text style={styles.cardTitle}>Method: {calc.calculation_method}</Text>
-                    <Text style={styles.cardText}>Parameters: {JSON.stringify(calc.parameters)}</Text>
-                    <Text style={styles.cardText}>Carbon: {calc.result.carbonEquivalent} kgCO₂e</Text>
-                    <Text style={styles.cardDate}>
-                      Date: {new Date(calc.created_at).toLocaleDateString()}
-                    </Text>
-                  </View>
-                ))
-              )}
-            </View>
-          ))}
-        </View>
-      ))}
-    </ScrollView>
+        {Object.entries(groupedData).map(([year, months]: any) => (
+          <View key={year} style={styles.section}>
+            <Text style={styles.year}>📆 Year: {year}</Text>
+
+            {Object.entries(months).map(([month, records]: any) => (
+              <View key={month} style={styles.subSection}>
+                <Text style={styles.month}>
+                  Month: {monthNames[parseInt(month) - 1]}
+                </Text>
+
+                {records.map((record: UserEmissions) =>
+                  record.calculations.map((calc, idx) => (
+                    <View key={idx} style={styles.card}>
+                      <Text style={styles.cardTitle}>
+                        Method: {calc.calculation_method}
+                      </Text>
+                      {renderParams(calc.calculation_method, calc.parameters)}
+                      <Text>
+                        Carbon: {calc.result.carbonEquivalent} kgCO₂e
+                      </Text>
+                      <Text style={styles.cardDate}>
+                        Date: {new Date(calc.created_at).toLocaleDateString()}
+                      </Text>
+                    </View>
+                  ))
+                )}
+              </View>
+            ))}
+          </View>
+        ))}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  scroll: {
     padding: 16,
     paddingBottom: 40,
-    backgroundColor: '#f4f4f4',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 10,
-    color: '#333',
   },
   refreshBtn: {
     backgroundColor: '#007aff',
@@ -95,16 +151,15 @@ const styles = StyleSheet.create({
   year: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#222',
     marginBottom: 6,
   },
   subSection: {
     paddingLeft: 8,
+    marginBottom: 10,
   },
   month: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#444',
     marginBottom: 6,
   },
   card: {
@@ -113,24 +168,18 @@ const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 10,
     shadowColor: '#000',
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.05,
     shadowRadius: 4,
-    elevation: 2,
+    elevation: 1,
   },
   cardTitle: {
     fontWeight: 'bold',
     fontSize: 15,
     marginBottom: 4,
-    color: '#333',
-  },
-  cardText: {
-    fontSize: 14,
-    color: '#555',
-    marginBottom: 2,
   },
   cardDate: {
     fontSize: 13,
-    color: '#888',
+    color: '#666',
     marginTop: 4,
   },
 });

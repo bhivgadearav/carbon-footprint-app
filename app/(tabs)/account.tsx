@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, Image } from 'react-native';
 import { AuthContext } from '../../context/AuthContext';
 import { login, signup } from '../../services/auth';
 
@@ -62,6 +62,13 @@ const AccountScreen = () => {
     <View style={styles.container}>
       {user ? (
         <>
+          <View style={{ alignItems: 'center', marginTop: 20 }}>
+            <Image
+              source={require('@/assets/images/plant.png')}
+              style={{ width: 100, height: 100 }}
+              resizeMode="contain"
+            />
+          </View>
           <Text style={styles.header}>Welcome, {user.email}</Text>
           <Pressable style={styles.button} onPress={signOut}>
             <Text style={styles.buttonText}>Sign Out</Text>
