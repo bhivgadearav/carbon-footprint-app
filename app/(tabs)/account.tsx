@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   button: {
-    backgroundColor: '#4f46e5',
+    backgroundColor: '#16a34a',
     paddingVertical: 14,
     borderRadius: 12,
     marginVertical: 10,
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   },
   switchMode: {
     textAlign: 'center',
-    color: '#4f46e5',
+    color: '#16a34a',
     marginTop: 10,
     fontSize: 14,
   },
